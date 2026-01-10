@@ -30,16 +30,18 @@ type Server struct {
 	httpServer *http.Server
 	sse        *SSEHub
 	basePath   string
+	version    string
 }
 
 // New creates a new server instance
-func New(cfg *config.Config, graph *beads.BeadsGraph) *Server {
+func New(cfg *config.Config, graph *beads.BeadsGraph, version string) *Server {
 	s := &Server{
 		config:   cfg,
 		graph:    graph,
 		router:   mux.NewRouter(),
 		sse:      NewSSEHub(),
 		basePath: "",
+		version:  version,
 	}
 
 	s.setupRoutes()

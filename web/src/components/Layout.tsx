@@ -11,9 +11,11 @@ import {
   WifiOff,
   HelpCircle,
   X,
+  ArrowUpCircle,
 } from 'lucide-react'
 import { useSSE } from '../hooks/useSSE'
 import { useKeyboard, KEYBOARD_SHORTCUTS } from '../hooks/useKeyboard'
+import { useVersionCheck } from '../hooks/useVersionCheck'
 import { setAgentMode } from '../api/client'
 import { clsx } from 'clsx'
 
@@ -30,6 +32,7 @@ const navItems = [
 
 export default function Layout({ children }: LayoutProps) {
   const { connected, lastUpdate } = useSSE()
+  const { updateAvailable, currentVersion, latestVersion } = useVersionCheck()
   const [agentModeEnabled, setAgentModeEnabled] = useState(false)
   const [showSearch, setShowSearch] = useState(false)
   const [showHelp, setShowHelp] = useState(false)
@@ -65,6 +68,18 @@ export default function Layout({ children }: LayoutProps) {
               <div className="w-3 h-3 rounded-full bg-primary-foreground" />
             </div>
             <span className="font-display font-bold text-xl tracking-tight">seeBeads</span>
+            {updateAvailable && (
+              <a
+                href="https://github.com/taylorkpotter/seeBeads#installation"
+                target="_blank"
+                rel="noopener noreferrer"
+                title={`Update available: ${currentVersion} → ${latestVersion}`}
+                className="flex items-center gap-1 px-2 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-medium hover:bg-amber-200 transition-colors"
+              >
+                <ArrowUpCircle size={14} strokeWidth={2} />
+                <span className="hidden sm:inline">{latestVersion}</span>
+              </a>
+            )}
           </div>
           
           {/* Navigation Pills */}

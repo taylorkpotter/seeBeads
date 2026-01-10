@@ -161,6 +161,7 @@ func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
 	beadsFile := filepath.Base(s.config.JSONLPath)
 	response := map[string]interface{}{
 		"status":      "ok",
+		"version":     s.version,
 		"beadsFile":   beadsFile,
 		"lastUpdated": s.graph.LastUpdated,
 		"totalBeads":  len(s.graph.Beads),

@@ -73,6 +73,7 @@ export async function setAgentMode(enabled: boolean): Promise<{ agentMode: boole
 
 export async function getHealth(): Promise<{
   status: string
+  version: string
   beadsFile: string
   lastUpdated: string
   totalBeads: number
