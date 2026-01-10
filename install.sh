@@ -342,7 +342,7 @@ main() {
         fi
         export PATH="${GOPATH}/bin:$PATH"
         
-        GOPROXY=direct go install "github.com/${REPO}/cmd/seebeads@v0.1.2" 2>/dev/null || {
+        GOPROXY=direct go install "github.com/${REPO}/cmd/seebeads@v0.1.3" 2>/dev/null || {
             print_error "Failed to install seebeads via go install"
             exit 1
         }
@@ -382,7 +382,7 @@ main() {
             fi
             export PATH="${GOPATH}/bin:$PATH"
             
-            GOPROXY=direct go install "github.com/${REPO}/cmd/seebeads@v0.1.2" 2>/dev/null || {
+            GOPROXY=direct go install "github.com/${REPO}/cmd/seebeads@v0.1.3" 2>/dev/null || {
                 print_error "Failed to install seebeads"
                 exit 1
             }
