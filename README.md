@@ -26,26 +26,7 @@ That's it. The installer will:
 
 ## For AI Agents
 
-Copy this into your agent's context or system prompt:
-
-```markdown
-## Beads Issue Tracking
-
-This project uses Beads for issue tracking. When you encounter bugs, have tasks to complete, or want to track features:
-
-### Creating Issues
-bd create "Description of the bug" --type bug
-bd create "Task to complete" --type task
-bd create "New feature idea" --type feature
-
-### Managing Issues
-bd list                          # List all issues
-bd status <id> in_progress       # Start working on an issue
-bd status <id> closed            # Mark as complete
-bd comment <id> "Progress..."    # Add a comment
-
-The seeBeads dashboard at http://localhost:3456 updates in real-time.
-```
+See [AGENT_INSTALL.md](AGENT_INSTALL.md) for instructions to add to your agent's context.
 
 ## Manual Usage
 

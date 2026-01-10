@@ -1,4 +1,44 @@
-# seeBeads Integration
+# seeBeads Agent Instructions
+
+## Agent Context (Copy This)
+
+Add this to your AI agent's system prompt or project context:
+
+```markdown
+## Beads Issue Tracking
+
+This project uses Beads for issue tracking. **Use beads instead of internal task lists** - they persist across sessions and are visible in the dashboard at http://localhost:3456
+
+### Listen and Capture
+
+When the user mentions any of these, create a bead immediately:
+- Bugs or problems → `bd create "description" --type bug`
+- Tasks or todos → `bd create "description" --type task`
+- Ideas or features → `bd create "description" --type feature`
+- Things to fix later → `bd create "description" --type task`
+
+Don't wait - if you hear it, bead it.
+
+### Workflow
+
+1. Before starting work: `bd list --status open`
+2. Pick a task: `bd status <id> in_progress`
+3. Do the work
+4. Add notes: `bd comment <id> "what was done"`
+5. Mark complete: `bd status <id> closed`
+
+### Commands Reference
+
+bd create "title" --type bug|task|feature
+bd list [--status open|in_progress|closed]
+bd status <id> open|in_progress|closed
+bd comment <id> "message"
+bd show <id>
+```
+
+---
+
+# Go Library Integration
 
 Add the seeBeads dashboard to your Go application. This displays a visual dashboard for your Beads issue tracker.
 
