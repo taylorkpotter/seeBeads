@@ -2,9 +2,9 @@
   <img src="docs/logo.png" alt="seeBeads" width="300">
 </p>
 
-A web dashboard for visualizing [Beads](https://github.com/steveyegge/beads) projects. Beads is a git-backed issue tracker by [Steve Yegge](https://github.com/steveyegge).
+A web dashboard for visualizing [Beads](https://github.com/steveyegge/beads) projects. Works with any project that has a `.beads/` folder.
 
-This is an unofficial companion tool - not affiliated with the Beads project.
+Unofficial companion tool - not affiliated with the Beads project.
 
 ## What it does
 
@@ -16,19 +16,15 @@ This is an unofficial companion tool - not affiliated with the Beads project.
 ## Install
 
 ```bash
-# From source
 git clone https://github.com/taylorkpotter/seeBeads.git
 cd seeBeads
 make build
-
-# Run
-./bin/seebeads serve --open
 ```
 
 ## Usage
 
 ```bash
-cd your-beads-project
+cd your-project    # any project with a .beads/ folder
 seebeads serve --open
 ```
 
@@ -53,21 +49,9 @@ Opens at `http://localhost:3456`
 | `Esc` | Close |
 | `1-5` | Switch views |
 
-## Embedding in your app
-
-If you're building a Go application that uses Beads, you can embed seeBeads directly:
-
-```go
-import "github.com/taylorkpotter/seeBeads"
-
-http.Handle("/beads/", seebeads.Handler("", "/beads"))
-```
-
-See [AGENT_INSTALL.md](AGENT_INSTALL.md) for integration instructions.
-
 ## Agent Mode
 
-When AI agents are rapidly creating/modifying beads, enable Agent Mode to batch UI updates and reduce jitter:
+When AI agents are rapidly creating/modifying beads, Agent Mode batches UI updates to reduce jitter:
 
 ```bash
 seebeads serve --agent-mode
@@ -75,29 +59,28 @@ seebeads serve --agent-mode
 
 ## Security
 
-This is a local development tool with no authentication. Don't expose it on public networks.
-
-- Binds to localhost by default
-- Read-only (never modifies your data)
+Local development tool with no authentication. Don't expose on public networks.
 
 ## Development
 
 ```bash
-# Setup
 cd web && npm install && cd ..
 go mod download
-
-# Build
 make build
-
-# Dev with hot reload
-make dev
 ```
+
+## Go embedding (optional)
+
+If you're building a Go app, you can embed the dashboard directly:
+
+```go
+import "github.com/taylorkpotter/seeBeads"
+
+http.Handle("/beads/", seebeads.Handler("", "/beads"))
+```
+
+See [AGENT_INSTALL.md](AGENT_INSTALL.md) for details.
 
 ## License
 
 MIT
-
-## Acknowledgments
-
-Built on top of [Beads](https://github.com/steveyegge/beads) by Steve Yegge.
