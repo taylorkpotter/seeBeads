@@ -56,22 +56,29 @@ func FindBeadsDir() (string, error) {
 	return "", fmt.Errorf("no .beads directory found in %s or any parent directory", cwd)
 }
 
-// FindBeadsDataPath returns the path to either beads.db or beads.jsonl
+// FindBeadsDataPath returns the path to either beads.db, issues.jsonl, or beads.jsonl
 // Returns (path, isSQLite, error)
 func FindBeadsDataPath(beadsDir string) (string, bool, error) {
-	// Prefer SQLite (newer Beads versions)
+	// Try JSONL first (works with no-db mode and is more reliable)
+	// Check issues.jsonl (newer naming convention)
+	issuesPath := filepath.Join(beadsDir, "issues.jsonl")
+	if info, err := os.Stat(issuesPath); err == nil && info.Size() > 0 {
+		return issuesPath, false, nil
+	}
+
+	// Check beads.jsonl (older naming convention)
+	jsonlPath := filepath.Join(beadsDir, "beads.jsonl")
+	if info, err := os.Stat(jsonlPath); err == nil && info.Size() > 0 {
+		return jsonlPath, false, nil
+	}
+
+	// Fall back to SQLite
 	dbPath := filepath.Join(beadsDir, "beads.db")
 	if _, err := os.Stat(dbPath); err == nil {
 		return dbPath, true, nil
 	}
 
-	// Fall back to JSONL (older Beads versions)
-	jsonlPath := filepath.Join(beadsDir, "beads.jsonl")
-	if _, err := os.Stat(jsonlPath); err == nil {
-		return jsonlPath, false, nil
-	}
-
-	return "", false, fmt.Errorf("no beads.db or beads.jsonl found in %s - run 'bd init' first", beadsDir)
+	return "", false, fmt.Errorf("no issues.jsonl, beads.jsonl, or beads.db found in %s - run 'bd init' first", beadsDir)
 }
 
 // FindJSONLPath returns the path to beads.jsonl within a .beads directory (legacy)
