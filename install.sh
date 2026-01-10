@@ -296,6 +296,28 @@ export GOPATH=\"\${HOME}/go\""
     return 1
 }
 
+# Check for existing seebeads binaries that might shadow new install
+check_existing_binaries() {
+    EXISTING=""
+    for dir in ~/bin ~/.local/bin ~/go/bin /usr/local/bin; do
+        if [ -f "$dir/seebeads" ]; then
+            EXISTING="$EXISTING $dir/seebeads"
+        fi
+    done
+    
+    if [ -n "$EXISTING" ]; then
+        print_warn "Found existing seebeads binaries:"
+        for bin in $EXISTING; do
+            VERSION=$("$bin" version 2>/dev/null | head -1 || echo "unknown")
+            printf "       ${DIM}%s${NC} (%s)\n" "$bin" "$VERSION"
+        done
+        printf "\n"
+        print_step "Will install to ${INSTALL_DIR}/seebeads"
+        print_step "Make sure ${INSTALL_DIR} is first in your PATH"
+        printf "\n"
+    fi
+}
+
 # Main installation
 main() {
     print_header
@@ -311,7 +333,9 @@ main() {
     fi
     
     print_step "Detected ${BOLD}${OS}/${ARCH}${NC}"
-    printf "\n"
+    
+    # Check for existing installations
+    check_existing_binaries
 
     # ═══════════════════════════════════════════════════════════════
     # Step 1: Ensure Go is installed
@@ -342,7 +366,7 @@ main() {
         fi
         export PATH="${GOPATH}/bin:$PATH"
         
-        GOPROXY=direct go install "github.com/${REPO}/cmd/seebeads@v0.1.3" 2>/dev/null || {
+        GOPROXY=direct go install "github.com/${REPO}/cmd/seebeads@v0.1.4" 2>/dev/null || {
             print_error "Failed to install seebeads via go install"
             exit 1
         }
@@ -382,7 +406,7 @@ main() {
             fi
             export PATH="${GOPATH}/bin:$PATH"
             
-            GOPROXY=direct go install "github.com/${REPO}/cmd/seebeads@v0.1.3" 2>/dev/null || {
+            GOPROXY=direct go install "github.com/${REPO}/cmd/seebeads@v0.1.4" 2>/dev/null || {
                 print_error "Failed to install seebeads"
                 exit 1
             }

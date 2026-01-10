@@ -1,5 +1,9 @@
 .PHONY: all build build-frontend build-backend dev clean release test
 
+# Version - update this for releases
+VERSION ?= 0.1.4
+LDFLAGS := -ldflags="-s -w -X main.version=$(VERSION)"
+
 # Default target
 all: build
 
@@ -16,8 +20,8 @@ build-frontend:
 
 # Build Go backend
 build-backend:
-	@echo "🔨 Building backend..."
-	go build -o bin/seebeads ./cmd/seebeads
+	@echo "🔨 Building backend (v$(VERSION))..."
+	go build $(LDFLAGS) -o bin/seebeads ./cmd/seebeads
 
 # Development mode - run frontend dev server
 dev-frontend:
@@ -47,23 +51,23 @@ test:
 
 # Cross-platform release builds
 release: build-frontend
-	@echo "🚀 Building release binaries..."
+	@echo "🚀 Building release binaries (v$(VERSION))..."
 	mkdir -p dist
 	
 	@echo "  Darwin AMD64..."
-	GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" -o dist/seebeads-darwin-amd64 ./cmd/seebeads
+	GOOS=darwin GOARCH=amd64 go build $(LDFLAGS) -o dist/seebeads-darwin-amd64 ./cmd/seebeads
 	
 	@echo "  Darwin ARM64..."
-	GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w" -o dist/seebeads-darwin-arm64 ./cmd/seebeads
+	GOOS=darwin GOARCH=arm64 go build $(LDFLAGS) -o dist/seebeads-darwin-arm64 ./cmd/seebeads
 	
 	@echo "  Linux AMD64..."
-	GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o dist/seebeads-linux-amd64 ./cmd/seebeads
+	GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -o dist/seebeads-linux-amd64 ./cmd/seebeads
 	
 	@echo "  Linux ARM64..."
-	GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -o dist/seebeads-linux-arm64 ./cmd/seebeads
+	GOOS=linux GOARCH=arm64 go build $(LDFLAGS) -o dist/seebeads-linux-arm64 ./cmd/seebeads
 	
 	@echo "  Windows AMD64..."
-	GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o dist/seebeads-windows-amd64.exe ./cmd/seebeads
+	GOOS=windows GOARCH=amd64 go build $(LDFLAGS) -o dist/seebeads-windows-amd64.exe ./cmd/seebeads
 	
 	@echo "✅ Release builds complete!"
 	@ls -la dist/
