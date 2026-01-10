@@ -15,8 +15,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/seebeads/seebeads/internal/beads"
-	"github.com/seebeads/seebeads/internal/server"
+	"github.com/taylorkpotter/seeBeads/internal/beads"
+	"github.com/taylorkpotter/seeBeads/internal/server"
 )
 
 // Handler returns an http.Handler that serves the seeBeads dashboard.

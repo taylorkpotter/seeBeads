@@ -90,7 +90,7 @@ You should see the file. Now proceed to Integration.
 ### 1. Add dependency
 
 ```bash
-go get github.com/seebeads/seebeads@latest
+go get github.com/taylorkpotter/seeBeads@latest
 ```
 
 ### 2. Add to your server
@@ -99,7 +99,7 @@ Find your main HTTP server file and add:
 
 **Import:**
 ```go
-"github.com/seebeads/seebeads"
+"github.com/taylorkpotter/seeBeads"
 ```
 
 **Route (add near your other routes):**
@@ -129,7 +129,7 @@ package main
 
 import (
     "net/http"
-    "github.com/seebeads/seebeads"
+    "github.com/taylorkpotter/seeBeads"
 )
 
 func main() {
@@ -212,8 +212,8 @@ Run through this if anything isn't working:
 
 - [ ] Beads CLI installed: `which bd` returns a path
 - [ ] Beads initialized: `.beads/beads.jsonl` exists
-- [ ] seeBeads dependency added: `go get github.com/seebeads/seebeads@latest`
-- [ ] Import added to server file: `"github.com/seebeads/seebeads"`
+- [ ] seeBeads dependency added: `go get github.com/taylorkpotter/seeBeads@latest`
+- [ ] Import added to server file: `"github.com/taylorkpotter/seeBeads"`
 - [ ] Route added: `http.Handle("/beads/", seebeads.Handler("", "/beads"))`
 - [ ] Dependencies tidied: `go mod tidy`
 - [ ] App running and `/beads/` accessible

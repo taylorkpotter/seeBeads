@@ -14,8 +14,8 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
-	"github.com/seebeads/seebeads/internal/beads"
-	"github.com/seebeads/seebeads/internal/config"
+	"github.com/taylorkpotter/seeBeads/internal/beads"
+	"github.com/taylorkpotter/seeBeads/internal/config"
 )
 
 //go:embed static/*

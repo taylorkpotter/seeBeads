@@ -15,9 +15,9 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"github.com/seebeads/seebeads/internal/beads"
-	"github.com/seebeads/seebeads/internal/config"
-	"github.com/seebeads/seebeads/internal/server"
+	"github.com/taylorkpotter/seeBeads/internal/beads"
+	"github.com/taylorkpotter/seeBeads/internal/config"
+	"github.com/taylorkpotter/seeBeads/internal/server"
 )
 
 var version = "0.1.0"

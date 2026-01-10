@@ -1,4 +1,4 @@
-module github.com/seebeads/seebeads
+module github.com/taylorkpotter/seeBeads
 
 go 1.21
 

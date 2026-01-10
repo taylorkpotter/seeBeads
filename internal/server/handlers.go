@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
-	"github.com/seebeads/seebeads/internal/beads"
+	"github.com/taylorkpotter/seeBeads/internal/beads"
 )
 
 // JSON response helper
