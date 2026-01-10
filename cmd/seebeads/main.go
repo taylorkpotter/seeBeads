@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"syscall"
@@ -54,23 +55,38 @@ var versionCmd = &cobra.Command{
 	},
 }
 
+var initCmd = &cobra.Command{
+	Use:   "init",
+	Short: "Initialize a new Beads project and optionally open dashboard",
+	Long: `Initialize a new Beads project in the current directory.
+Creates a .beads/ folder with an empty beads.jsonl file.
+
+With --open, immediately starts the dashboard server and opens your browser.`,
+	RunE: runInit,
+}
+
 var (
 	flagPort       int
 	flagHost       string
 	flagOpen       bool
 	flagNoWatch    bool
 	flagAgentMode  bool
+	flagInitPath   string
 )
 
 func init() {
 	rootCmd.AddCommand(serveCmd)
 	rootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(initCmd)
 
 	serveCmd.Flags().IntVarP(&flagPort, "port", "p", 3456, "Port to listen on")
 	serveCmd.Flags().StringVarP(&flagHost, "host", "H", "127.0.0.1", "Host to bind to")
 	serveCmd.Flags().BoolVarP(&flagOpen, "open", "o", false, "Open browser automatically")
 	serveCmd.Flags().BoolVar(&flagNoWatch, "no-watch", false, "Disable file watching")
 	serveCmd.Flags().BoolVar(&flagAgentMode, "agent-mode", false, "Start with Agent Mode enabled")
+
+	initCmd.Flags().BoolVarP(&flagOpen, "open", "o", false, "Open dashboard after initialization")
+	initCmd.Flags().StringVarP(&flagInitPath, "path", "p", "", "Directory to initialize (defaults to current directory)")
 }
 
 func runServe(cmd *cobra.Command, args []string) error {
@@ -196,5 +212,69 @@ func truncatePath(path string, maxLen int) string {
 		return path + strings.Repeat(" ", maxLen-len(path))
 	}
 	return "..." + path[len(path)-maxLen+3:]
+}
+
+func runInit(cmd *cobra.Command, args []string) error {
+	// Determine target directory
+	targetDir := flagInitPath
+	if targetDir == "" {
+		var err error
+		targetDir, err = os.Getwd()
+		if err != nil {
+			return fmt.Errorf("failed to get current directory: %w", err)
+		}
+	}
+
+	// Create .beads directory
+	beadsDir := filepath.Join(targetDir, ".beads")
+	if err := os.MkdirAll(beadsDir, 0755); err != nil {
+		return fmt.Errorf("failed to create .beads directory: %w", err)
+	}
+
+	// Create empty beads.jsonl if it doesn't exist
+	jsonlPath := filepath.Join(beadsDir, "beads.jsonl")
+	if _, err := os.Stat(jsonlPath); os.IsNotExist(err) {
+		file, err := os.Create(jsonlPath)
+		if err != nil {
+			return fmt.Errorf("failed to create beads.jsonl: %w", err)
+		}
+		file.Close()
+		fmt.Printf("  %s Created %s\n", "✓", jsonlPath)
+	} else {
+		fmt.Printf("  %s Found existing %s\n", "→", jsonlPath)
+	}
+
+	fmt.Println("")
+	fmt.Println("  ╭─────────────────────────────────────────────╮")
+	fmt.Println("  │                                             │")
+	fmt.Printf("  │   🔮 Beads project initialized!             │\n")
+	fmt.Println("  │                                             │")
+	fmt.Println("  ╰─────────────────────────────────────────────╯")
+	fmt.Println("")
+
+	// If --open flag, start the server
+	if flagOpen {
+		// Change to target directory so serve can find .beads
+		if err := os.Chdir(targetDir); err != nil {
+			return fmt.Errorf("failed to change to target directory: %w", err)
+		}
+		
+		// Set default flags for serve
+		flagPort = 3456
+		flagHost = "127.0.0.1"
+		flagNoWatch = false
+		flagAgentMode = false
+		flagOpen = true
+		
+		return runServe(cmd, args)
+	}
+
+	// Show next steps
+	fmt.Println("  Next steps:")
+	fmt.Println("")
+	fmt.Printf("    \033[36mseebeads serve --open\033[0m   Start the dashboard\n")
+	fmt.Println("")
+	
+	return nil
 }
 

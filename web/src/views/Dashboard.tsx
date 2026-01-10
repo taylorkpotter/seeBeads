@@ -5,6 +5,7 @@ import { useSSE } from '../hooks/useSSE'
 import StatCard from '../components/StatCard'
 import BeadRow from '../components/BeadRow'
 import BeadDetail from '../components/BeadDetail'
+import EmptyState from '../components/EmptyState'
 import { useState } from 'react'
 import { 
   Circle, 
@@ -58,6 +59,14 @@ export default function Dashboard() {
         <div className="animate-spin w-8 h-8 border-2 border-industrial-accent border-t-transparent rounded-full" />
       </div>
     )
+  }
+
+  // Check if there are any beads at all
+  const totalBeads = Object.values(stats.byStatus || {}).reduce((sum, count) => sum + count, 0)
+  
+  // Show empty state when no beads exist
+  if (totalBeads === 0) {
+    return <EmptyState />
   }
   
   const statusData = Object.entries(stats.byStatus || {}).map(([key, value]) => ({

@@ -11,7 +11,7 @@ Unofficial companion tool - not affiliated with the Beads project.
 - Reads your `.beads/beads.jsonl` file
 - Displays issues in a web UI with filtering and search
 - Updates in real-time when the file changes
-- Provides dashboard, list, board, epic, and timeline views
+- Provides dashboard, list, epic, and timeline views
 
 ## Install
 
@@ -24,7 +24,11 @@ make build
 ## Usage
 
 ```bash
-cd your-project    # any project with a .beads/ folder
+# Initialize a new project
+seebeads init
+
+# Or start dashboard in existing project
+cd your-project
 seebeads serve --open
 ```
 
@@ -47,7 +51,7 @@ Opens at `http://localhost:3456`
 | `j` / `k` | Navigate |
 | `Enter` | Open |
 | `Esc` | Close |
-| `1-5` | Switch views |
+| `1-4` | Switch views |
 
 ## Agent Mode
 
