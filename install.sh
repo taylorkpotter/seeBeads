@@ -296,12 +296,24 @@ export GOPATH=\"\${HOME}/go\""
     return 1
 }
 
-# Target version for this installer
-TARGET_VERSION="v0.1.4"
+# Get latest version from GitHub tags
+get_target_version() {
+    # Try to get latest tag from GitHub
+    LATEST=$(curl -fsSL "https://api.github.com/repos/${REPO}/tags" 2>/dev/null | \
+        grep '"name"' | head -1 | sed -E 's/.*"([^"]+)".*/\1/' || echo "")
+    
+    if [ -n "$LATEST" ]; then
+        echo "$LATEST"
+    else
+        # Fallback to hardcoded version if API fails
+        echo "v0.1.4"
+    fi
+}
 
 # Check for existing seebeads binaries
 # Returns 0 if up-to-date version found, 1 otherwise
 check_existing_binaries() {
+    TARGET_VERSION="$1"
     EXISTING=""
     UPTODATE=""
     
@@ -355,8 +367,14 @@ main() {
     print_step "Detected ${BOLD}${OS}/${ARCH}${NC}"
     printf "\n"
     
+    # Get target version from GitHub
+    print_step "Checking latest version..."
+    TARGET_VERSION="$(get_target_version)"
+    print_success "Latest version: ${TARGET_VERSION}"
+    printf "\n"
+    
     # Check for existing installations
-    if check_existing_binaries; then
+    if check_existing_binaries "$TARGET_VERSION"; then
         # Already up-to-date, offer to launch
         printf "  ${CYAN}Run:${NC} seebeads serve --open\n\n"
         exit 0
@@ -391,7 +409,7 @@ main() {
         fi
         export PATH="${GOPATH}/bin:$PATH"
         
-        GOPROXY=direct go install "github.com/${REPO}/cmd/seebeads@v0.1.4" 2>/dev/null || {
+        GOPROXY=direct go install "github.com/${REPO}/cmd/seebeads@${TARGET_VERSION}" 2>/dev/null || {
             print_error "Failed to install seebeads via go install"
             exit 1
         }
@@ -431,7 +449,7 @@ main() {
             fi
             export PATH="${GOPATH}/bin:$PATH"
             
-            GOPROXY=direct go install "github.com/${REPO}/cmd/seebeads@v0.1.4" 2>/dev/null || {
+            GOPROXY=direct go install "github.com/${REPO}/cmd/seebeads@${TARGET_VERSION}" 2>/dev/null || {
                 print_error "Failed to install seebeads"
                 exit 1
             }

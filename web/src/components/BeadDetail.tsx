@@ -79,16 +79,16 @@ export default function BeadDetail({ beadId, onClose }: BeadDetailProps) {
   }
   
   return (
-    <div className="fixed inset-0 bg-industrial-text/20 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in" onClick={onClose}>
+    <div className="fixed inset-0 bg-foreground/20 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in" onClick={onClose}>
       <div 
-        className="bg-industrial-background rounded-2xl shadow-neu-floating w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col animate-enter corner-screws"
+        className="bg-card rounded-2xl shadow-float w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col animate-enter corner-screws"
         onClick={e => e.stopPropagation()}
       >
         {/* Header - Bolted Panel */}
-        <div className="flex items-start justify-between p-8 border-b border-industrial-border">
+        <div className="flex items-start justify-between p-8 border-b border-border">
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <span className="font-mono text-industrial-text font-bold text-sm">{bead.id}</span>
+              <span className="font-mono text-foreground font-bold text-sm">{bead.id}</span>
               <span className={clsx(
                 'px-3 py-1 rounded text-xs font-bold uppercase tracking-wide',
                 getStatusBadgeClasses(bead.status)
@@ -109,9 +109,9 @@ export default function BeadDetail({ beadId, onClose }: BeadDetailProps) {
                 P{bead.priority}
               </span>
             </div>
-            <h2 className="text-xl text-industrial-text leading-tight font-semibold">{bead.title}</h2>
+            <h2 className="text-xl text-foreground leading-tight font-semibold">{bead.title}</h2>
           </div>
-          <button onClick={onClose} className="p-2 rounded-lg bg-industrial-background shadow-neu-card hover:shadow-neu-pressed active:translate-y-[2px] transition-all">
+          <button onClick={onClose} className="p-2 rounded-lg bg-background shadow-soft hover:shadow-float active:translate-y-[2px] transition-all">
             <X size={20} strokeWidth={1.5} />
           </button>
         </div>
@@ -121,54 +121,54 @@ export default function BeadDetail({ beadId, onClose }: BeadDetailProps) {
           {/* Description */}
           {bead.description && (
             <div className="mb-8">
-              <h3 className="text-sm font-bold uppercase tracking-wide text-industrial-text mb-3 flex items-center gap-2">
+              <h3 className="text-sm font-bold uppercase tracking-wide text-foreground mb-3 flex items-center gap-2">
                 Description
               </h3>
-              <div className="prose prose-sm max-w-none text-industrial-text-muted text-sm leading-relaxed">
+              <div className="prose prose-sm max-w-none text-foreground text-sm leading-relaxed">
                 <ReactMarkdown>{bead.description}</ReactMarkdown>
               </div>
             </div>
           )}
           
           {/* Metadata Grid - Industrial Panel */}
-          <div className="grid grid-cols-2 gap-4 mb-8 bg-industrial-muted/50 p-6 rounded-lg shadow-neu-recessed">
+          <div className="grid grid-cols-2 gap-4 mb-8 bg-muted/50 p-6 rounded-lg shadow-inner">
             {bead.assignee && (
               <div className="flex items-center gap-3 text-sm">
-                <div className="w-9 h-9 rounded-lg bg-industrial-background shadow-neu-card flex items-center justify-center text-industrial-text">
+                <div className="w-9 h-9 rounded-lg bg-background shadow-soft flex items-center justify-center text-foreground">
                   <User size={16} strokeWidth={1.5} />
                 </div>
                 <div>
-                  <div className="text-xs text-industrial-text-muted font-medium uppercase tracking-wide">Assignee</div>
-                  <div className="font-semibold text-sm text-industrial-text">{bead.assignee}</div>
+                  <div className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Assignee</div>
+                  <div className="font-semibold text-sm text-foreground">{bead.assignee}</div>
                 </div>
               </div>
             )}
             <div className="flex items-center gap-3 text-sm">
-              <div className="w-9 h-9 rounded-lg bg-industrial-background shadow-neu-card flex items-center justify-center text-industrial-text">
+              <div className="w-9 h-9 rounded-lg bg-background shadow-soft flex items-center justify-center text-foreground">
                 <Clock size={16} strokeWidth={1.5} />
               </div>
               <div>
-                <div className="text-xs text-industrial-text-muted font-medium uppercase tracking-wide">Created</div>
-                <div className="font-semibold text-sm text-industrial-text">{new Date(bead.created_at).toLocaleDateString()}</div>
+                <div className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Created</div>
+                <div className="font-semibold text-sm text-foreground">{new Date(bead.created_at).toLocaleDateString()}</div>
               </div>
             </div>
             <div className="flex items-center gap-3 text-sm">
-              <div className="w-9 h-9 rounded-lg bg-industrial-background shadow-neu-card flex items-center justify-center text-industrial-text">
+              <div className="w-9 h-9 rounded-lg bg-background shadow-soft flex items-center justify-center text-foreground">
                 <Clock size={16} strokeWidth={1.5} />
               </div>
               <div>
-                <div className="text-xs text-industrial-text-muted font-medium uppercase tracking-wide">Updated</div>
-                <div className="font-semibold text-sm text-industrial-text">{new Date(bead.updated_at).toLocaleDateString()}</div>
+                <div className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Updated</div>
+                <div className="font-semibold text-sm text-foreground">{new Date(bead.updated_at).toLocaleDateString()}</div>
               </div>
             </div>
             {bead.closed_at && (
               <div className="flex items-center gap-3 text-sm">
-                <div className="w-9 h-9 rounded-lg bg-green-600 shadow-neu-sharp flex items-center justify-center text-white">
+                <div className="w-9 h-9 rounded-lg bg-green-600 shadow-md flex items-center justify-center text-white">
                   <Clock size={16} strokeWidth={1.5} />
                 </div>
                 <div>
-                  <div className="text-xs text-industrial-text-muted font-medium uppercase tracking-wide">Closed</div>
-                  <div className="font-semibold text-sm text-industrial-text">{new Date(bead.closed_at).toLocaleDateString()}</div>
+                  <div className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Closed</div>
+                  <div className="font-semibold text-sm text-foreground">{new Date(bead.closed_at).toLocaleDateString()}</div>
                 </div>
               </div>
             )}
@@ -177,13 +177,13 @@ export default function BeadDetail({ beadId, onClose }: BeadDetailProps) {
           {/* Labels */}
           {bead.labels && bead.labels.length > 0 && (
             <div className="mb-8">
-              <h3 className="text-sm font-bold uppercase tracking-wide text-industrial-text mb-3 flex items-center gap-2">
+              <h3 className="text-sm font-bold uppercase tracking-wide text-foreground mb-3 flex items-center gap-2">
                 <Tag size={16} strokeWidth={1.5} />
                 Labels
               </h3>
               <div className="flex flex-wrap gap-2">
                 {bead.labels.map(label => (
-                  <span key={label} className="px-3 py-1 rounded bg-industrial-muted text-industrial-text-muted text-xs font-mono shadow-neu-recessed uppercase tracking-wide">
+                  <span key={label} className="px-3 py-1 rounded bg-muted text-muted-foreground text-xs font-mono shadow-inner uppercase tracking-wide">
                     {label}
                   </span>
                 ))}
@@ -194,7 +194,7 @@ export default function BeadDetail({ beadId, onClose }: BeadDetailProps) {
           {/* Parent */}
           {parent && (
             <div className="mb-8">
-              <h3 className="text-sm font-bold uppercase tracking-wide text-industrial-text mb-3 flex items-center gap-2">
+              <h3 className="text-sm font-bold uppercase tracking-wide text-foreground mb-3 flex items-center gap-2">
                 <Link2 size={16} strokeWidth={1.5} />
                 Parent
               </h3>
@@ -205,7 +205,7 @@ export default function BeadDetail({ beadId, onClose }: BeadDetailProps) {
           {/* Blockers */}
           {blockers && blockers.length > 0 && (
             <div className="mb-8">
-              <h3 className="text-sm font-bold uppercase tracking-wide text-industrial-accent mb-3 flex items-center gap-2">
+              <h3 className="text-sm font-bold uppercase tracking-wide text-destructive mb-3 flex items-center gap-2">
                 <AlertTriangle size={16} strokeWidth={1.5} />
                 Blocked By ({blockers.length})
               </h3>
@@ -220,7 +220,7 @@ export default function BeadDetail({ beadId, onClose }: BeadDetailProps) {
           {/* Blocking */}
           {blocked && blocked.length > 0 && (
             <div className="mb-8">
-              <h3 className="text-sm font-bold uppercase tracking-wide text-industrial-text-muted mb-3">Blocking ({blocked.length})</h3>
+              <h3 className="text-sm font-bold uppercase tracking-wide text-muted-foreground mb-3">Blocking ({blocked.length})</h3>
               <div className="space-y-2">
                 {blocked.map(b => (
                   <RelatedBeadCard key={b.id} bead={b} />
@@ -232,7 +232,7 @@ export default function BeadDetail({ beadId, onClose }: BeadDetailProps) {
           {/* Children */}
           {children && children.length > 0 && (
             <div className="mb-8">
-              <h3 className="text-sm font-bold uppercase tracking-wide text-industrial-text-muted mb-3">Children ({children.length})</h3>
+              <h3 className="text-sm font-bold uppercase tracking-wide text-muted-foreground mb-3">Children ({children.length})</h3>
               <div className="space-y-2">
                 {children.map(b => (
                   <RelatedBeadCard key={b.id} bead={b} />
@@ -243,17 +243,17 @@ export default function BeadDetail({ beadId, onClose }: BeadDetailProps) {
         </div>
         
         {/* Footer - Action Buttons */}
-        <div className="flex items-center gap-3 p-6 border-t border-industrial-border bg-industrial-muted/30">
+        <div className="flex items-center gap-3 p-6 border-t border-border bg-muted/30">
           <button
             onClick={() => copyToClipboard(bead.id)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-industrial-background text-industrial-text shadow-neu-card hover:shadow-neu-floating transition-all text-sm font-medium"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-background text-foreground shadow-soft hover:shadow-float transition-all text-sm font-medium"
           >
             <Copy size={16} strokeWidth={1.5} />
             Copy ID
           </button>
           <button
             onClick={() => copyToClipboard(`bd show ${bead.id}`)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-industrial-background text-industrial-text shadow-neu-card hover:shadow-neu-floating transition-all text-sm font-medium"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-background text-foreground shadow-soft hover:shadow-float transition-all text-sm font-medium"
           >
             <Terminal size={16} strokeWidth={1.5} />
             bd show
@@ -261,7 +261,7 @@ export default function BeadDetail({ beadId, onClose }: BeadDetailProps) {
           {bead.status !== 'closed' && (
             <button
               onClick={() => copyToClipboard(`bd update ${bead.id} -s closed`)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-industrial-accent text-industrial-accent-foreground shadow-neu-button hover:brightness-110 transition-all text-sm font-bold ml-auto"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground shadow-soft hover:brightness-110 transition-all text-sm font-bold ml-auto"
             >
               <Terminal size={16} strokeWidth={1.5} />
               bd close
@@ -276,24 +276,24 @@ export default function BeadDetail({ beadId, onClose }: BeadDetailProps) {
 function RelatedBeadCard({ bead }: { bead: Bead }) {
   const getStatusClasses = (status: string) => {
     const map: Record<string, string> = {
-      open: 'bg-industrial-background text-industrial-text shadow-neu-recessed',
-      in_progress: 'bg-industrial-accent text-industrial-accent-foreground shadow-neu-button',
-      closed: 'bg-green-600 text-white shadow-neu-sharp',
-      blocked: 'bg-industrial-accent text-industrial-accent-foreground shadow-neu-button',
+      open: 'bg-background text-foreground shadow-inner',
+      in_progress: 'bg-primary text-primary-foreground shadow-soft',
+      closed: 'bg-green-600 text-white shadow-md',
+      blocked: 'bg-destructive text-primary-foreground shadow-soft',
     }
-    return map[status] || 'bg-industrial-background text-industrial-text shadow-neu-recessed'
+    return map[status] || 'bg-background text-foreground shadow-inner'
   }
   
   return (
-    <div className="flex items-center gap-4 p-3 rounded-lg bg-industrial-muted/30 shadow-neu-recessed hover:shadow-neu-card transition-all cursor-pointer group">
-      <span className="font-mono text-xs text-industrial-text font-bold">{bead.id}</span>
+    <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/30 shadow-inner hover:shadow-soft transition-all cursor-pointer group">
+      <span className="font-mono text-xs text-foreground font-bold">{bead.id}</span>
       <span className={clsx(
         'px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wide',
         getStatusClasses(bead.status)
       )}>
         {bead.status}
       </span>
-      <span className="truncate text-sm font-medium text-industrial-text">{bead.title}</span>
+      <span className="truncate text-sm font-medium text-foreground">{bead.title}</span>
     </div>
   )
 }
