@@ -4,10 +4,122 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	_ "modernc.org/sqlite"
 )
+
+// findIssuesTable looks for the issues/beads table in the database
+func findIssuesTable(db *sql.DB) (string, error) {
+	// Common table names to try
+	tableNames := []string{"issues", "beads", "issue", "bead", "tasks"}
+
+	rows, err := db.Query(`SELECT name FROM sqlite_master WHERE type='table'`)
+	if err != nil {
+		return "", err
+	}
+	defer rows.Close()
+
+	var tables []string
+	for rows.Next() {
+		var name string
+		if err := rows.Scan(&name); err == nil {
+			tables = append(tables, strings.ToLower(name))
+		}
+	}
+
+	// Try known table names first
+	for _, known := range tableNames {
+		for _, table := range tables {
+			if table == known {
+				return table, nil
+			}
+		}
+	}
+
+	// Return first non-system table if nothing matches
+	for _, table := range tables {
+		if !strings.HasPrefix(table, "sqlite_") && table != "schema_migrations" {
+			return table, nil
+		}
+	}
+
+	return "", fmt.Errorf("no suitable table found, available: %v", tables)
+}
+
+// getTableColumns returns the column names for a table
+func getTableColumns(db *sql.DB, tableName string) (map[string]bool, error) {
+	rows, err := db.Query(fmt.Sprintf("PRAGMA table_info(%s)", tableName))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	columns := make(map[string]bool)
+	for rows.Next() {
+		var cid int
+		var name, ctype string
+		var notnull, pk int
+		var dfltValue sql.NullString
+		if err := rows.Scan(&cid, &name, &ctype, &notnull, &dfltValue, &pk); err == nil {
+			columns[strings.ToLower(name)] = true
+		}
+	}
+	return columns, nil
+}
+
+// buildSelectQuery builds a SELECT query based on available columns
+func buildSelectQuery(tableName string, columns map[string]bool) string {
+	// Map of our expected fields to possible column names
+	fieldMappings := map[string][]string{
+		"id":          {"id", "issue_id", "bead_id"},
+		"title":       {"title", "name", "summary"},
+		"description": {"description", "body", "content", "details"},
+		"status":      {"status", "state"},
+		"issue_type":  {"issue_type", "type", "kind", "category"},
+		"priority":    {"priority", "importance", "severity"},
+		"assignee":    {"assignee", "assigned_to", "owner"},
+		"created_at":  {"created_at", "created", "create_time"},
+		"updated_at":  {"updated_at", "updated", "update_time", "modified_at"},
+		"closed_at":   {"closed_at", "closed", "resolved_at"},
+		"parent_id":   {"parent_id", "parent", "epic_id"},
+	}
+
+	var selectParts []string
+	for field, possibleNames := range fieldMappings {
+		found := false
+		for _, colName := range possibleNames {
+			if columns[colName] {
+				selectParts = append(selectParts, fmt.Sprintf("COALESCE(%s, '') as %s", colName, field))
+				found = true
+				break
+			}
+		}
+		if !found {
+			// Use default value
+			switch field {
+			case "priority":
+				selectParts = append(selectParts, "2 as priority")
+			case "status":
+				selectParts = append(selectParts, "'open' as status")
+			case "issue_type":
+				selectParts = append(selectParts, "'task' as issue_type")
+			default:
+				selectParts = append(selectParts, fmt.Sprintf("'' as %s", field))
+			}
+		}
+	}
+
+	query := fmt.Sprintf("SELECT %s FROM %s", strings.Join(selectParts, ", "), tableName)
+
+	// Add status filter if column exists
+	if columns["status"] {
+		query += " WHERE status != 'tombstone'"
+	}
+
+	return query
+}
 
 // ParseSQLite reads beads from a SQLite database (beads.db)
 func ParseSQLite(dbPath string) (*ParseResult, error) {
@@ -28,25 +140,21 @@ func ParseSQLite(dbPath string) (*ParseResult, error) {
 		FileSize: stat.Size(),
 	}
 
-	// Query issues from the database
-	// The schema may vary - try common column names
-	rows, err := db.Query(`
-		SELECT 
-			id,
-			COALESCE(title, '') as title,
-			COALESCE(description, '') as description,
-			COALESCE(status, 'open') as status,
-			COALESCE(issue_type, 'task') as issue_type,
-			COALESCE(priority, 2) as priority,
-			COALESCE(assignee, '') as assignee,
-			COALESCE(created_at, datetime('now')) as created_at,
-			COALESCE(updated_at, datetime('now')) as updated_at,
-			closed_at,
-			COALESCE(parent_id, '') as parent_id
-		FROM issues
-		WHERE status != 'tombstone'
-		ORDER BY created_at DESC
-	`)
+	// Try to find the correct table name
+	tableName, err := findIssuesTable(db)
+	if err != nil {
+		return nil, fmt.Errorf("no issues table found in database: %w", err)
+	}
+
+	// Get column names to handle different schemas
+	columns, err := getTableColumns(db, tableName)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get table columns: %w", err)
+	}
+
+	// Build query based on available columns
+	query := buildSelectQuery(tableName, columns)
+	rows, err := db.Query(query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query issues: %w", err)
 	}

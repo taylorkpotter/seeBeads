@@ -472,9 +472,8 @@ main() {
     "$SEEBEADS_BIN" init --open 2>/dev/null || {
         # If init fails, show manual instructions
         printf "\n${CYAN}${BOLD}  Quick Start:${NC}\n\n"
-        printf "  ${DIM}1.${NC} Navigate to any project directory\n"
-        printf "  ${DIM}2.${NC} Run: ${CYAN}seebeads init --open${NC}\n\n"
-        printf "  ${DIM}This creates a .beads/ folder and opens the dashboard.${NC}\n\n"
+        printf "  ${DIM}1.${NC} Navigate to a project with .beads/ folder\n"
+        printf "  ${DIM}2.${NC} Run: ${CYAN}seebeads serve --open${NC}\n\n"
     }
 }
 
