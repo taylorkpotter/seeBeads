@@ -2,37 +2,65 @@
   <img src="docs/logo.png" alt="seeBeads" width="300">
 </p>
 
-A web dashboard for visualizing [Beads](https://github.com/steveyegge/beads) projects. Works with any project that has a `.beads/` folder.
+<p align="center">
+  <strong>Visual dashboard for AI agent issue tracking</strong>
+</p>
 
-Unofficial companion tool - not affiliated with the Beads project.
+<p align="center">
+  One command. Dashboard opens. Start tracking.
+</p>
 
-## What it does
-
-- Reads your `.beads/beads.jsonl` file
-- Displays issues in a web UI with filtering and search
-- Updates in real-time when the file changes
-- Provides dashboard, list, epic, and timeline views
+---
 
 ## Install
 
 ```bash
-git clone https://github.com/taylorkpotter/seeBeads.git
-cd seeBeads
-make build
+curl -sSL https://raw.githubusercontent.com/taylorkpotter/seeBeads/main/install.sh | sh
 ```
 
-## Usage
+That's it. The installer will:
+1. Install Go (if needed)
+2. Install the seeBeads dashboard
+3. Install the Beads CLI (`bd`)
+4. Open the dashboard in your browser
+
+## For AI Agents
+
+Copy this into your agent's context or system prompt:
+
+```markdown
+## Beads Issue Tracking
+
+This project uses Beads for issue tracking. When you encounter bugs, have tasks to complete, or want to track features:
+
+### Creating Issues
+bd create "Description of the bug" --type bug
+bd create "Task to complete" --type task
+bd create "New feature idea" --type feature
+
+### Managing Issues
+bd list                          # List all issues
+bd status <id> in_progress       # Start working on an issue
+bd status <id> closed            # Mark as complete
+bd comment <id> "Progress..."    # Add a comment
+
+The seeBeads dashboard at http://localhost:3456 updates in real-time.
+```
+
+## Manual Usage
+
+If you already have the tools installed:
 
 ```bash
-# Initialize a new project
-seebeads init
-
-# Or start dashboard in existing project
 cd your-project
-seebeads serve --open
+seebeads init --open    # Initialize and open dashboard
 ```
 
-Opens at `http://localhost:3456`
+Or if you already have a `.beads/` folder:
+
+```bash
+seebeads serve --open   # Just open the dashboard
+```
 
 ### Options
 
@@ -43,7 +71,13 @@ Opens at `http://localhost:3456`
 --agent-mode  Batch updates for AI workflows
 ```
 
-## Keyboard shortcuts
+## What is Beads?
+
+[Beads](https://github.com/steveyegge/beads) is Steve Yegge's git-backed issue tracker designed for AI coding agents. Issues are stored as JSON in your repo, so your agent can create and update them directly.
+
+seeBeads provides a visual dashboard to see all your beads in one place.
+
+## Keyboard Shortcuts
 
 | Key | Action |
 |-----|--------|
@@ -51,31 +85,11 @@ Opens at `http://localhost:3456`
 | `j` / `k` | Navigate |
 | `Enter` | Open |
 | `Esc` | Close |
-| `1-4` | Switch views |
+| `1-5` | Switch views |
 
-## Agent Mode
+## Go Library
 
-When AI agents are rapidly creating/modifying beads, Agent Mode batches UI updates to reduce jitter:
-
-```bash
-seebeads serve --agent-mode
-```
-
-## Security
-
-Local development tool with no authentication. Don't expose on public networks.
-
-## Development
-
-```bash
-cd web && npm install && cd ..
-go mod download
-make build
-```
-
-## Go embedding (optional)
-
-If you're building a Go app, you can embed the dashboard directly:
+If you're building a Go app, you can embed the dashboard:
 
 ```go
 import "github.com/taylorkpotter/seeBeads"
@@ -83,7 +97,18 @@ import "github.com/taylorkpotter/seeBeads"
 http.Handle("/beads/", seebeads.Handler("", "/beads"))
 ```
 
-See [AGENT_INSTALL.md](AGENT_INSTALL.md) for details.
+## Development
+
+```bash
+git clone https://github.com/taylorkpotter/seeBeads.git
+cd seeBeads
+make build
+./bin/seebeads serve --open
+```
+
+## Security
+
+This is a local development tool. It binds to `127.0.0.1` by default and has no authentication. Don't expose it on public networks.
 
 ## License
 

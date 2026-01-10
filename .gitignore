@@ -2,9 +2,8 @@
 bin/
 dist/
 web/dist/
-internal/server/static/assets/
-internal/server/static/index.html
-internal/server/static/favicon.svg
+# NOTE: internal/server/static/ is intentionally NOT ignored
+# The pre-built frontend must be committed for `go install` to work
 
 # Dependencies
 web/node_modules/
