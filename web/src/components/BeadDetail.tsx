@@ -22,8 +22,8 @@ export default function BeadDetail({ beadId, onClose }: BeadDetailProps) {
   
   if (isLoading) {
     return (
-      <div className="fixed inset-0 bg-foreground/20 backdrop-blur-sm flex items-center justify-center z-50">
-        <div className="bg-card rounded-xl p-8 shadow-float corner-screws">
+      <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+        <div className="bg-background rounded-xl p-8 shadow-float border border-border">
           <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" />
         </div>
       </div>
@@ -32,11 +32,11 @@ export default function BeadDetail({ beadId, onClose }: BeadDetailProps) {
   
   if (error || !data) {
     return (
-      <div className="fixed inset-0 bg-foreground/20 backdrop-blur-sm flex items-center justify-center z-50" onClick={onClose}>
-        <div className="bg-card rounded-xl p-8 text-center shadow-float corner-screws">
+      <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50" onClick={onClose}>
+        <div className="bg-background rounded-xl p-8 text-center shadow-float border border-border">
           <AlertTriangle className="w-12 h-12 text-destructive mx-auto mb-4" strokeWidth={1.5} />
           <p className="text-muted-foreground font-medium text-sm">Failed to load bead</p>
-          <button onClick={onClose} className="mt-4 px-4 py-2 bg-background rounded-lg shadow-soft hover:shadow-inner active:translate-y-[2px] transition-all font-medium text-sm">Close</button>
+          <button onClick={onClose} className="mt-4 px-4 py-2 bg-muted rounded-lg shadow-soft hover:shadow-inner active:translate-y-[2px] transition-all font-medium text-sm">Close</button>
         </div>
       </div>
     )
@@ -79,9 +79,9 @@ export default function BeadDetail({ beadId, onClose }: BeadDetailProps) {
   }
   
   return (
-    <div className="fixed inset-0 bg-foreground/20 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in" onClick={onClose}>
       <div 
-        className="bg-card rounded-2xl shadow-float w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col animate-enter corner-screws"
+        className="bg-background rounded-2xl shadow-float w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col animate-enter border border-border"
         onClick={e => e.stopPropagation()}
       >
         {/* Header - Bolted Panel */}
