@@ -296,26 +296,46 @@ export GOPATH=\"\${HOME}/go\""
     return 1
 }
 
-# Check for existing seebeads binaries that might shadow new install
+# Target version for this installer
+TARGET_VERSION="v0.1.4"
+
+# Check for existing seebeads binaries
+# Returns 0 if up-to-date version found, 1 otherwise
 check_existing_binaries() {
     EXISTING=""
+    UPTODATE=""
+    
     for dir in ~/bin ~/.local/bin ~/go/bin /usr/local/bin; do
         if [ -f "$dir/seebeads" ]; then
             EXISTING="$EXISTING $dir/seebeads"
+            VERSION=$("$dir/seebeads" version 2>/dev/null | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
+            if [ "$VERSION" = "$TARGET_VERSION" ]; then
+                UPTODATE="$dir/seebeads"
+            fi
         fi
     done
     
+    if [ -n "$UPTODATE" ]; then
+        print_success "seeBeads ${TARGET_VERSION} already installed at ${UPTODATE}"
+        printf "\n"
+        printf "  ${DIM}To reinstall anyway, run:${NC}\n"
+        printf "  ${CYAN}GOPROXY=direct go install github.com/${REPO}/cmd/seebeads@${TARGET_VERSION}${NC}\n"
+        printf "\n"
+        return 0
+    fi
+    
     if [ -n "$EXISTING" ]; then
-        print_warn "Found existing seebeads binaries:"
+        print_warn "Found older seebeads versions:"
         for bin in $EXISTING; do
             VERSION=$("$bin" version 2>/dev/null | head -1 || echo "unknown")
             printf "       ${DIM}%s${NC} (%s)\n" "$bin" "$VERSION"
         done
         printf "\n"
-        print_step "Will install to ${INSTALL_DIR}/seebeads"
-        print_step "Make sure ${INSTALL_DIR} is first in your PATH"
+        print_step "Will upgrade to ${TARGET_VERSION}"
         printf "\n"
     fi
+    
+    return 1
 }
 
 # Main installation
@@ -333,9 +353,14 @@ main() {
     fi
     
     print_step "Detected ${BOLD}${OS}/${ARCH}${NC}"
+    printf "\n"
     
     # Check for existing installations
-    check_existing_binaries
+    if check_existing_binaries; then
+        # Already up-to-date, offer to launch
+        printf "  ${CYAN}Run:${NC} seebeads serve --open\n\n"
+        exit 0
+    fi
 
     # ═══════════════════════════════════════════════════════════════
     # Step 1: Ensure Go is installed
