@@ -9,13 +9,15 @@ import (
 
 // Config holds the server configuration
 type Config struct {
-	Port      int
-	Host      string
+	Port        int
+	Host        string
 	OpenBrowser bool
 	AgentMode   bool
 	NoWatch     bool
 	BeadsPath   string // Path to .beads directory
-	JSONLPath   string // Path to beads.jsonl
+	JSONLPath   string // Path to beads.jsonl (legacy)
+	DBPath      string // Path to beads.db (SQLite)
+	UseSQLite   bool   // True if using SQLite backend
 }
 
 // DefaultConfig returns the default configuration
@@ -54,7 +56,25 @@ func FindBeadsDir() (string, error) {
 	return "", fmt.Errorf("no .beads directory found in %s or any parent directory", cwd)
 }
 
-// FindJSONLPath returns the path to beads.jsonl within a .beads directory
+// FindBeadsDataPath returns the path to either beads.db or beads.jsonl
+// Returns (path, isSQLite, error)
+func FindBeadsDataPath(beadsDir string) (string, bool, error) {
+	// Prefer SQLite (newer Beads versions)
+	dbPath := filepath.Join(beadsDir, "beads.db")
+	if _, err := os.Stat(dbPath); err == nil {
+		return dbPath, true, nil
+	}
+
+	// Fall back to JSONL (older Beads versions)
+	jsonlPath := filepath.Join(beadsDir, "beads.jsonl")
+	if _, err := os.Stat(jsonlPath); err == nil {
+		return jsonlPath, false, nil
+	}
+
+	return "", false, fmt.Errorf("no beads.db or beads.jsonl found in %s - run 'bd init' first", beadsDir)
+}
+
+// FindJSONLPath returns the path to beads.jsonl within a .beads directory (legacy)
 func FindJSONLPath(beadsDir string) (string, error) {
 	jsonlPath := filepath.Join(beadsDir, "beads.jsonl")
 	if _, err := os.Stat(jsonlPath); err != nil {

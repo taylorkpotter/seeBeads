@@ -96,18 +96,18 @@ func runServe(cmd *cobra.Command, args []string) error {
 		fmt.Fprintln(os.Stderr, "")
 		fmt.Fprintln(os.Stderr, "  No Beads project found.")
 		fmt.Fprintln(os.Stderr, "")
-		fmt.Fprintln(os.Stderr, "  Run 'bd init' first to create a Beads project,")
+		fmt.Fprintln(os.Stderr, "  Run 'seebeads init' or 'bd init' first,")
 		fmt.Fprintln(os.Stderr, "  or 'cd' to a directory with an existing .beads/ folder.")
 		fmt.Fprintln(os.Stderr, "")
 		return fmt.Errorf("no .beads directory found")
 	}
 
-	// Find beads.jsonl
-	jsonlPath, err := config.FindJSONLPath(beadsDir)
+	// Find beads data file (SQLite or JSONL)
+	dataPath, useSQLite, err := config.FindBeadsDataPath(beadsDir)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "")
-		fmt.Fprintln(os.Stderr, "  Beads directory found but no beads.jsonl.")
-		fmt.Fprintln(os.Stderr, "  Has 'bd' been initialized?")
+		fmt.Fprintln(os.Stderr, "  Beads directory found but no data file.")
+		fmt.Fprintln(os.Stderr, "  Run 'bd init' to initialize Beads.")
 		fmt.Fprintln(os.Stderr, "")
 		return err
 	}
@@ -120,16 +120,27 @@ func runServe(cmd *cobra.Command, args []string) error {
 		AgentMode:   flagAgentMode,
 		NoWatch:     flagNoWatch,
 		BeadsPath:   beadsDir,
-		JSONLPath:   jsonlPath,
+		UseSQLite:   useSQLite,
+	}
+	if useSQLite {
+		cfg.DBPath = dataPath
+	} else {
+		cfg.JSONLPath = dataPath
 	}
 
 	if err := cfg.Validate(); err != nil {
 		return fmt.Errorf("invalid configuration: %w", err)
 	}
 
-	// Parse the JSONL file and build the graph
-	log.Printf("Loading beads from %s...", jsonlPath)
-	graph, err := beads.BuildGraph(jsonlPath)
+	// Build the graph from SQLite or JSONL
+	var graph *beads.BeadsGraph
+	if useSQLite {
+		log.Printf("Loading beads from %s (SQLite)...", dataPath)
+		graph, err = beads.BuildGraphFromSQLite(dataPath)
+	} else {
+		log.Printf("Loading beads from %s (JSONL)...", dataPath)
+		graph, err = beads.BuildGraph(dataPath)
+	}
 	if err != nil {
 		return fmt.Errorf("failed to build graph: %w", err)
 	}
@@ -159,7 +170,7 @@ func runServe(cmd *cobra.Command, args []string) error {
 	fmt.Printf("  │   🔮 seeBeads Dashboard                     │\n")
 	fmt.Printf("  │   ➜  Local: \033[36m%s\033[0m           │\n", url)
 	fmt.Println("  │                                             │")
-	fmt.Printf("  │   📁 %s                │\n", truncatePath(jsonlPath, 30))
+	fmt.Printf("  │   📁 %s                │\n", truncatePath(dataPath, 30))
 	fmt.Printf("  │   📊 %d beads loaded                        │\n", len(graph.Beads))
 	if flagAgentMode {
 		fmt.Println("  │   🤖 Agent Mode: enabled                    │")
