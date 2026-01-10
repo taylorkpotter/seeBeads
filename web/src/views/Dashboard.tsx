@@ -7,14 +7,7 @@ import BeadRow from '../components/BeadRow'
 import BeadDetail from '../components/BeadDetail'
 import EmptyState from '../components/EmptyState'
 import { useState } from 'react'
-import { 
-  Circle, 
-  PlayCircle, 
-  CheckCircle2, 
-  XCircle, 
-  Clock,
-  Zap,
-} from 'lucide-react'
+import { Clock } from 'lucide-react'
 import { 
   BarChart, 
   Bar, 
@@ -113,42 +106,36 @@ export default function Dashboard() {
         <StatCard
           label="Open"
           value={stats.byStatus?.open || 0}
-          icon={<Circle size={20} strokeWidth={2} />}
           color="blue"
           onClick={() => navigate('/issues?status=open')}
         />
         <StatCard
           label="In Progress"
           value={stats.byStatus?.in_progress || 0}
-          icon={<PlayCircle size={20} strokeWidth={2} />}
           color="yellow"
           onClick={() => navigate('/issues?status=in_progress')}
         />
         <StatCard
           label="Closed"
           value={stats.byStatus?.closed || 0}
-          icon={<CheckCircle2 size={20} strokeWidth={2} />}
           color="green"
           onClick={() => navigate('/issues?status=closed')}
         />
         <StatCard
           label="Blocked"
           value={stats.blocked || 0}
-          icon={<XCircle size={20} strokeWidth={2} />}
           color="red"
           onClick={() => navigate('/issues?status=blocked')}
         />
         <StatCard
           label="Ready"
           value={stats.ready || 0}
-          icon={<Zap size={20} strokeWidth={2} />}
           color="purple"
           onClick={() => navigate('/issues?ready=true')}
         />
         <StatCard
           label="Stale"
           value={stats.stale || 0}
-          icon={<Clock size={20} strokeWidth={2} />}
           color="gray"
         />
       </div>
