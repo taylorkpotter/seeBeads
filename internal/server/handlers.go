@@ -178,6 +178,9 @@ func (s *Server) handleEpics(w http.ResponseWriter, r *http.Request) {
 
 // POST /api/agent-mode
 func (s *Server) handleAgentMode(w http.ResponseWriter, r *http.Request) {
+	// Limit request body to 1KB to prevent DoS
+	r.Body = http.MaxBytesReader(w, r.Body, 1024)
+	
 	var body struct {
 		Enabled bool `json:"enabled"`
 	}

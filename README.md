@@ -143,15 +143,6 @@ seeBeads is designed as a **local development tool**. Keep these points in mind:
 
 If you need to share the dashboard (e.g., on a team network), consider putting it behind a reverse proxy with authentication.
 
-## Demo Data
-
-To try seeBeads without an existing Beads project, use the included demo data:
-
-```bash
-cd examples/demo-beads
-seebeads serve --open
-```
-
 ## Development
 
 ### Prerequisites
