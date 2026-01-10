@@ -1,21 +1,29 @@
-# seeBeads 🔮
+<p align="center">
+  <img src="docs/logo.png" alt="seeBeads" width="400">
+</p>
 
-A beautiful, real-time dashboard for [Beads](https://github.com/steveyegge/beads) projects.
+<p align="center">
+  <strong>A beautiful, real-time dashboard for <a href="https://github.com/steveyegge/beads">Beads</a> projects.</strong>
+</p>
 
-> **Note:** seeBeads is an unofficial companion tool for [Beads](https://github.com/steveyegge/beads), the git-backed issue tracker created by [Steve Yegge](https://github.com/steveyegge). This project is not affiliated with or endorsed by the Beads project.
+<p align="center">
+  <em>seeBeads is an unofficial companion tool for <a href="https://github.com/steveyegge/beads">Beads</a>, the git-backed issue tracker created by <a href="https://github.com/steveyegge">Steve Yegge</a>.</em>
+</p>
+
+---
 
 ![Dashboard Preview](docs/dashboard.png)
 
 ## Features
 
-- **📊 Real-time Dashboard** - Live-updating stats, charts, and metrics
-- **📋 Issue Browser** - Filter, search, and explore all your beads
-- **🎯 Kanban Board** - Drag-free board view organized by status
-- **📁 Epic View** - Hierarchical view of epics and their children
-- **📈 Timeline** - Chronological activity feed
-- **⌨️ Keyboard Shortcuts** - Navigate entirely without a mouse
-- **🤖 Agent Mode** - Batched updates for high-churn AI workflows
-- **🚀 Zero Config** - Single binary, works out of the box
+- **Real-time Dashboard** - Live-updating stats, charts, and metrics
+- **Issue Browser** - Filter, search, and explore all your beads
+- **Kanban Board** - Drag-free board view organized by status
+- **Epic View** - Hierarchical view of epics and their children
+- **Timeline** - Chronological activity feed
+- **Keyboard Shortcuts** - Navigate entirely without a mouse
+- **Agent Mode** - Batched updates for high-churn AI workflows
+- **Zero Config** - Single binary, works out of the box
 
 ## Installation
 
