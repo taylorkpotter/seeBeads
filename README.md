@@ -1,206 +1,103 @@
 <p align="center">
-  <img src="docs/logo.png" alt="seeBeads" width="400">
+  <img src="docs/logo.png" alt="seeBeads" width="300">
 </p>
 
-<p align="center">
-  <strong>A beautiful, real-time dashboard for <a href="https://github.com/steveyegge/beads">Beads</a> projects.</strong>
-</p>
+A web dashboard for visualizing [Beads](https://github.com/steveyegge/beads) projects. Beads is a git-backed issue tracker by [Steve Yegge](https://github.com/steveyegge).
 
-<p align="center">
-  <em>seeBeads is an unofficial companion tool for <a href="https://github.com/steveyegge/beads">Beads</a>, the git-backed issue tracker created by <a href="https://github.com/steveyegge">Steve Yegge</a>.</em>
-</p>
+This is an unofficial companion tool - not affiliated with the Beads project.
 
----
+## What it does
 
-![Dashboard Preview](docs/dashboard.png)
+- Reads your `.beads/beads.jsonl` file
+- Displays issues in a web UI with filtering and search
+- Updates in real-time when the file changes
+- Provides dashboard, list, board, epic, and timeline views
 
-## Features
-
-- **Real-time Dashboard** - Live-updating stats, charts, and metrics
-- **Issue Browser** - Filter, search, and explore all your beads
-- **Kanban Board** - Drag-free board view organized by status
-- **Epic View** - Hierarchical view of epics and their children
-- **Timeline** - Chronological activity feed
-- **Keyboard Shortcuts** - Navigate entirely without a mouse
-- **Agent Mode** - Batched updates for high-churn AI workflows
-- **Zero Config** - Single binary, works out of the box
-
-## Installation
-
-### Homebrew (macOS)
+## Install
 
 ```bash
-brew install seebeads/tap/seebeads
-```
-
-### Binary Download
-
-Download the latest release for your platform from the [releases page](https://github.com/seebeads/seebeads/releases).
-
-### From Source
-
-```bash
-git clone https://github.com/seebeads/seebeads.git
-cd seebeads
+# From source
+git clone https://github.com/taylorkpotter/seeBeads.git
+cd seeBeads
 make build
+
+# Run
 ./bin/seebeads serve --open
 ```
 
-## Quick Start
+## Usage
 
 ```bash
-# Navigate to any directory with a .beads/ folder
-cd my-project
-
-# Start the dashboard
+cd your-beads-project
 seebeads serve --open
 ```
 
-The dashboard will open in your browser at `http://localhost:3456`.
+Opens at `http://localhost:3456`
 
-## Usage
+### Options
 
 ```
-seebeads - Visual dashboard for Beads projects
-
-USAGE:
-    seebeads <command> [options]
-
-COMMANDS:
-    serve       Start the web dashboard server
-    version     Print version information
-    help        Show this help message
-
-SERVE OPTIONS:
-    --port, -p <port>     Port to listen on (default: 3456)
-    --host, -H <host>     Host to bind to (default: 127.0.0.1)
-    --open, -o            Open browser automatically
-    --no-watch            Disable file watching (static mode)
-    --agent-mode          Start with Agent Mode enabled
-
-EXAMPLES:
-    seebeads serve                    # Start on localhost:3456
-    seebeads serve --port 8080        # Custom port
-    seebeads serve --open             # Auto-open browser
-    seebeads serve --host 0.0.0.0     # Allow LAN access
+--port, -p    Port (default: 3456)
+--host, -H    Host (default: 127.0.0.1)
+--open, -o    Open browser automatically
+--agent-mode  Batch updates for AI workflows
 ```
 
-## Keyboard Shortcuts
+## Keyboard shortcuts
 
 | Key | Action |
 |-----|--------|
-| `/` | Focus search |
-| `f` | Open filter panel |
-| `j` / `↓` | Navigate down |
-| `k` / `↑` | Navigate up |
-| `Enter` | Open selected |
-| `Esc` | Close modal |
+| `/` | Search |
+| `j` / `k` | Navigate |
+| `Enter` | Open |
+| `Esc` | Close |
 | `1-5` | Switch views |
-| `?` | Show help |
 
-## Views
+## Embedding in your app
 
-### Dashboard
-Overview of your project's health:
-- Status counts (Open, In Progress, Closed, Blocked)
-- 7-day velocity metrics
-- Status and type distribution charts
-- Ready work and recent activity lists
+If you're building a Go application that uses Beads, you can embed seeBeads directly:
 
-### Issues
-Filterable list of all beads:
-- Filter by status, type, priority
-- Search by ID, title, or description
-- Click to view full details
+```go
+import "github.com/taylorkpotter/seeBeads"
 
-### Epics
-Hierarchical view of epics:
-- Expand to see child issues
-- Progress bars for completion status
-- Click children to view details
+http.Handle("/beads/", seebeads.Handler("", "/beads"))
+```
 
-### Board
-Kanban-style board:
-- Columns: Blocked, Ready, In Progress, Closed
-- Cards show type, priority, assignee
-- Updates in real-time
-
-### Timeline
-Chronological activity feed:
-- Filter by time range (24h, 7d, 30d, all)
-- Grouped by date
-- Click events to view details
+See [AGENT_INSTALL.md](AGENT_INSTALL.md) for integration instructions.
 
 ## Agent Mode
 
-When working with AI coding agents that rapidly create/modify beads, enable Agent Mode to batch UI updates:
+When AI agents are rapidly creating/modifying beads, enable Agent Mode to batch UI updates and reduce jitter:
 
 ```bash
 seebeads serve --agent-mode
 ```
 
-Or toggle it in the header. Agent Mode batches updates to 2-3 second intervals, preventing UI jitter during high-churn operations.
+## Security
 
-## Security Considerations
+This is a local development tool with no authentication. Don't expose it on public networks.
 
-seeBeads is designed as a **local development tool**. Keep these points in mind:
-
-- **No authentication**: The dashboard has no built-in auth. Don't expose it on public networks.
-- **Local binding**: By default, the server binds to `127.0.0.1` (localhost only). Using `--host 0.0.0.0` exposes it to your network.
-- **Read-only**: seeBeads only reads from `beads.jsonl`; it never modifies your data.
-
-If you need to share the dashboard (e.g., on a team network), consider putting it behind a reverse proxy with authentication.
+- Binds to localhost by default
+- Read-only (never modifies your data)
 
 ## Development
 
-### Prerequisites
-
-- Go 1.21+
-- Node.js 18+
-- npm
-
-### Setup
-
 ```bash
-# Install dependencies
+# Setup
 cd web && npm install && cd ..
 go mod download
 
 # Build
 make build
 
-# Development with hot reload
+# Dev with hot reload
 make dev
 ```
 
-### Project Structure
-
-```
-seebeads/
-├── cmd/seebeads/          # CLI entry point
-├── internal/
-│   ├── beads/             # JSONL parser, graph builder
-│   ├── server/            # HTTP server, handlers, SSE
-│   └── config/            # Configuration
-├── web/                   # React frontend
-│   ├── src/
-│   │   ├── components/    # Reusable components
-│   │   ├── views/         # Page views
-│   │   ├── hooks/         # React hooks
-│   │   └── api/           # API client
-│   └── ...
-└── Makefile
-```
-
-## Contributing
-
-Contributions are welcome! Please read our [contributing guidelines](CONTRIBUTING.md) first.
-
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+MIT
 
 ## Acknowledgments
 
-- **[Beads](https://github.com/steveyegge/beads)** by [Steve Yegge](https://github.com/steveyegge) - The git-backed issue tracker that seeBeads visualizes. This project would not exist without Beads.
-- Built with [React](https://react.dev), [Tailwind CSS](https://tailwindcss.com), and [Go](https://go.dev)
+Built on top of [Beads](https://github.com/steveyegge/beads) by Steve Yegge.
