@@ -165,6 +165,9 @@ export default function Layout({ children }: LayoutProps) {
           {lastUpdate && (
             <span>Last update: {lastUpdate.toLocaleTimeString()}</span>
           )}
+          {currentVersion && (
+            <span className="font-mono text-xs">{currentVersion}</span>
+          )}
         </div>
       </footer>
       
