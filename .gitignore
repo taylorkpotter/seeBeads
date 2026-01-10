@@ -1,0 +1,43 @@
+# Build artifacts
+bin/
+dist/
+web/dist/
+internal/server/static/assets/
+internal/server/static/index.html
+internal/server/static/favicon.svg
+
+# Dependencies
+web/node_modules/
+
+# Beads data (prevent accidentally committing real project data)
+.beads/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+
+# Debug
+debug
+*.log
+
+# Environment
+.env
+.env.*
+!.env.example
