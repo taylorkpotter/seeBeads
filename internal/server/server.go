@@ -80,11 +80,12 @@ func NewHandler(graph *beads.BeadsGraph, jsonlPath, basePath string) http.Handle
 		Graph:     graph,
 		AgentMode: false,
 		OnChange: func() {
+			// Broadcast reload event to trigger full data refetch
 			s.sse.Broadcast(SSEEvent{
-				Type: "update",
+				Type: "reload",
 				Data: map[string]interface{}{
-					"type":  "stats",
-					"stats": graph.GetStats(),
+					"timestamp": time.Now().Format(time.RFC3339),
+					"stats":     graph.GetStats(),
 				},
 			})
 		},
@@ -213,16 +214,16 @@ func (s *Server) Start() error {
 			FilePath:  s.config.JSONLPath,
 			Graph:     s.graph,
 			AgentMode: s.config.AgentMode,
-			OnChange: func() {
-				// Notify all SSE clients
-				s.sse.Broadcast(SSEEvent{
-					Type: "update",
-					Data: map[string]interface{}{
-						"type":  "stats",
-						"stats": s.graph.GetStats(),
-					},
-				})
-			},
+		OnChange: func() {
+			// Broadcast reload event to trigger full data refetch
+			s.sse.Broadcast(SSEEvent{
+				Type: "reload",
+				Data: map[string]interface{}{
+					"timestamp": time.Now().Format(time.RFC3339),
+					"stats":     s.graph.GetStats(),
+				},
+			})
+		},
 		})
 		if err != nil {
 			log.Printf("Warning: file watching disabled: %v", err)

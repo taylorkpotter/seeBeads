@@ -12,6 +12,7 @@ import {
   HelpCircle,
   X,
   ArrowUpCircle,
+  RefreshCw,
 } from 'lucide-react'
 import { useSSE } from '../hooks/useSSE'
 import { useKeyboard, KEYBOARD_SHORTCUTS } from '../hooks/useKeyboard'
@@ -31,7 +32,8 @@ const navItems = [
 ]
 
 export default function Layout({ children }: LayoutProps) {
-  const { connected, lastUpdate } = useSSE()
+  const { connected, lastUpdate, refresh } = useSSE()
+  const [isRefreshing, setIsRefreshing] = useState(false)
   const { updateAvailable, currentVersion, latestVersion } = useVersionCheck()
   const [agentModeEnabled, setAgentModeEnabled] = useState(false)
   const [showSearch, setShowSearch] = useState(false)
@@ -127,13 +129,41 @@ export default function Layout({ children }: LayoutProps) {
             <span className="hidden sm:inline">Agent</span>
           </button>
           
+          {/* Refresh Button */}
+          <button
+            onClick={async () => {
+              setIsRefreshing(true)
+              refresh()
+              // Visual feedback for refresh
+              setTimeout(() => setIsRefreshing(false), 500)
+            }}
+            disabled={isRefreshing}
+            className="flex items-center gap-2 px-3 py-2 rounded-full bg-white/50 text-muted-foreground hover:bg-white hover:text-foreground transition-all duration-300"
+            title="Refresh data"
+          >
+            <RefreshCw 
+              size={16} 
+              strokeWidth={2} 
+              className={clsx(isRefreshing && 'animate-spin')}
+            />
+          </button>
+          
           {/* Connection Status */}
-          <div className={clsx(
-            'flex items-center gap-2 px-3 py-2 rounded-full bg-white/50',
-            connected ? 'text-primary' : 'text-muted-foreground'
-          )}>
+          <div 
+            className={clsx(
+              'flex items-center gap-2 px-3 py-2 rounded-full bg-white/50 transition-colors',
+              connected ? 'text-primary' : 'text-muted-foreground'
+            )}
+            title={connected ? 'Live updates active' : 'Disconnected - reconnecting...'}
+          >
             {connected ? (
-              <Wifi size={16} strokeWidth={2} />
+              <>
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                </span>
+                <Wifi size={16} strokeWidth={2} />
+              </>
             ) : (
               <WifiOff size={16} strokeWidth={2} />
             )}
