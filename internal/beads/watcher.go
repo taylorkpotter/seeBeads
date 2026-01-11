@@ -2,6 +2,7 @@ package beads
 
 import (
 	"log"
+	"path/filepath"
 	"sync"
 	"time"
 
@@ -13,6 +14,8 @@ type Watcher struct {
 	graph      *BeadsGraph
 	fsWatcher  *fsnotify.Watcher
 	filePath   string
+	fileName   string // Just the filename (e.g., "issues.jsonl")
+	dirPath    string // Parent directory to watch
 	debounce   time.Duration
 	agentMode  bool
 	onChange   func()
@@ -45,6 +48,8 @@ func NewWatcher(config WatcherConfig) (*Watcher, error) {
 		graph:     config.Graph,
 		fsWatcher: fsWatcher,
 		filePath:  config.FilePath,
+		fileName:  filepath.Base(config.FilePath),
+		dirPath:   filepath.Dir(config.FilePath),
 		debounce:  debounce,
 		agentMode: config.AgentMode,
 		onChange:  config.OnChange,
@@ -56,10 +61,12 @@ func NewWatcher(config WatcherConfig) (*Watcher, error) {
 
 // Start begins watching the file
 func (w *Watcher) Start() error {
-	err := w.fsWatcher.Add(w.filePath)
+	// Watch the directory instead of the file to catch atomic writes (rename)
+	err := w.fsWatcher.Add(w.dirPath)
 	if err != nil {
 		return err
 	}
+	log.Printf("Watching directory: %s for changes to %s", w.dirPath, w.fileName)
 
 	w.wg.Add(1)
 	go w.watch()
@@ -105,10 +112,22 @@ func (w *Watcher) watch() {
 				return
 			}
 
-			// Only react to write events
-			if event.Op&fsnotify.Write != fsnotify.Write {
+			// Only process events for our target file
+			eventFileName := filepath.Base(event.Name)
+			if eventFileName != w.fileName {
 				continue
 			}
+
+			// React to write, create, and rename events
+			// (atomic writes use rename: write to .tmp then rename to target)
+			isRelevant := event.Op&fsnotify.Write == fsnotify.Write ||
+				event.Op&fsnotify.Create == fsnotify.Create ||
+				event.Op&fsnotify.Rename == fsnotify.Rename
+			if !isRelevant {
+				continue
+			}
+			
+			log.Printf("File event: %s %s", event.Op, event.Name)
 
 			// Debounce: reset timer on each event
 			w.mu.Lock()

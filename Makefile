@@ -1,7 +1,7 @@
 .PHONY: all build build-frontend build-backend dev clean release test
 
 # Version - update this for releases
-VERSION ?= 0.1.10
+VERSION ?= 0.1.11
 LDFLAGS := -ldflags="-s -w -X main.version=$(VERSION)"
 
 # Default target
