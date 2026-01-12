@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { Stats } from '../types'
 
@@ -6,15 +6,6 @@ interface SSEState {
   connected: boolean
   stats: Stats | null
   lastUpdate: Date | null
-}
-
-// Debounce helper
-function debounce<T extends (...args: unknown[]) => void>(fn: T, ms: number): T {
-  let timeoutId: number | null = null
-  return ((...args: unknown[]) => {
-    if (timeoutId) clearTimeout(timeoutId)
-    timeoutId = window.setTimeout(() => fn(...args), ms)
-  }) as T
 }
 
 export function useSSE() {
@@ -27,17 +18,20 @@ export function useSSE() {
   const queryClient = useQueryClient()
   const eventSourceRef = useRef<EventSource | null>(null)
   const reconnectTimeoutRef = useRef<number | null>(null)
+  const debounceTimeoutRef = useRef<number | null>(null)
   
-  // Debounce query invalidation to handle rapid file changes (e.g., agent bulk operations)
-  const debouncedInvalidate = useMemo(
-    () => debounce(() => {
+  // Debounced invalidation using ref to avoid dependency issues
+  const invalidateQueries = useCallback(() => {
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current)
+    }
+    debounceTimeoutRef.current = window.setTimeout(() => {
       if (import.meta.env.DEV) {
         console.log('[SSE] Invalidating queries')
       }
       queryClient.invalidateQueries()
-    }, 500),
-    [queryClient]
-  )
+    }, 300) // Reduced from 500ms to 300ms
+  }, [queryClient])
   
   const connect = useCallback(() => {
     if (eventSourceRef.current) {
@@ -110,13 +104,13 @@ export function useSSE() {
       }))
       
       // Invalidate all queries to trigger refetch (debounced for bulk operations)
-      debouncedInvalidate()
+      invalidateQueries()
     })
     
     es.addEventListener('heartbeat', () => {
       // Keep-alive, no action needed
     })
-  }, [debouncedInvalidate])
+  }, [invalidateQueries])
   
   useEffect(() => {
     connect()
@@ -127,6 +121,9 @@ export function useSSE() {
       }
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current)
+      }
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current)
       }
     }
   }, [connect])
